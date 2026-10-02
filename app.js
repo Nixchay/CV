@@ -1,10 +1,8 @@
 const $ = (s) => document.querySelector(s);
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-let paused = reduced.matches;
-let motionOverride = false;
-try{motionOverride=localStorage.getItem('nischaya-studio-motion')==='enabled';}catch{}
-if(motionOverride)paused=false;
-const reduceMotion = () => reduced.matches && !motionOverride;
+let paused = false;
+let motionOverride = true;
+const reduceMotion = () => false;
 let projects = [], activeFilter = 'all', expanded = false, cvPage = 1;
 const categoryNames = { skill: 'ING Skill', '3d': '3D & experiences', rive: 'Interactive / Rive' };
 const interactiveNames = ['Puppy eye follow bee', 'Maze — do not touch the wall', 'Button hover & press'];
@@ -83,10 +81,12 @@ function updateTour(){
 let scrollQueued=false;window.addEventListener('scroll',()=>{if(!scrollQueued){scrollQueued=true;requestAnimationFrame(()=>{updateTour();scrollQueued=false;});}},{passive:true});window.addEventListener('resize',updateTour);updateTour();
 function updateMotion(){const button=$('#motion-toggle');button.textContent=reduceMotion()?'3D tour ↗':paused?'▶':'Ⅱ';button.style.width=reduceMotion()?'80px':'30px';button.style.borderRadius=reduceMotion()?'20px':'50%';button.setAttribute('aria-pressed',String(paused));button.setAttribute('aria-label',reduceMotion()?'Enable 3D studio tour':paused?'Resume studio animation':'Pause studio animation');button.title=button.getAttribute('aria-label');document.body.classList.toggle('full-motion',motionOverride);window.dispatchEvent(new CustomEvent('studio-motion',{detail:{paused,reduced:reduceMotion()}}));}
 function enableTour(){motionOverride=true;paused=false;try{localStorage.setItem('nischaya-studio-motion','enabled');}catch{}updateMotion();updateTour();}
-$('#motion-toggle').addEventListener('click',()=>{if(reduceMotion())enableTour();else{paused=!paused;updateMotion();updateTour();}});reduced.addEventListener('change',()=>{motionOverride=false;paused=reduced.matches;updateMotion();updateTour();});updateMotion();
+$('#motion-toggle').addEventListener('click',()=>{if(reduceMotion())enableTour();else{paused=!paused;updateMotion();updateTour();}});reduced.addEventListener('change', () => {
+  updateMotion();
+  updateTour();
+});;updateMotion();
 function goToChapter(index){if(reduceMotion())enableTour();const range=$('.journey').offsetHeight-innerHeight;window.scrollTo({top:range*[0,.19,.38,.58,.78,.96][index],behavior:'smooth'});}
 document.querySelectorAll('[data-tour-stop]').forEach(button=>button.addEventListener('click',()=>goToChapter(Number(button.dataset.tourStop))));
-$('#enter-studio').addEventListener('click',()=>goToChapter(1));
 $('.scroll-cue').addEventListener('click',event=>{event.preventDefault();goToChapter(1);});
 
 try {
