@@ -101,15 +101,7 @@ export async function initStudio(options){
  window.addEventListener('studio-scroll',e=>{progress=e.detail.progress;active=window.scrollY<document.querySelector('.journey').offsetHeight;});
  window.addEventListener('studio-motion',e=>{paused=e.detail.paused;reduced=e.detail.reduced;});
  function resize(){const w=host.clientWidth,h=host.clientHeight;if(w!==size.w||h!==size.h){size={w,h};renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}}
- function const screenImage = new Image();
-screenImage.src = './assets/pc-screen.jpg';
-
-function paintArt(t) {
-  if (!screenImage.complete || !screenImage.naturalWidth) return;
-
-  art.drawImage(screenImage, 0, 0, 768, 432);
-  artTexture.needsUpdate = true;
-}
+ function paintArt(t){art.fillStyle='#282822';art.fillRect(0,0,768,432);for(let i=0;i<13;i++){const shift=Math.sin(t*.45+i*.3)*45;art.beginPath();art.moveTo(-100,230+i*14);art.bezierCurveTo(140,20+shift+i*12,480,440-shift-i*14,850,85+i*12);art.strokeStyle=['#c9b18b','#e2c99b','#9f8454','#746043'][i%4];art.lineWidth=18-i*.5;art.stroke();}artTexture.needsUpdate=true;}
  function animate(now){requestAnimationFrame(animate);const dt=Math.min((now-last)/1000,.06);last=now;if(document.hidden||!active)return;
   if(!paused&&!reduced)time+=dt;smooth=reduced?0:smooth+(progress-smooth)*(1-Math.exp(-dt*6));
   const mobile=window.innerWidth<=600;host.style.left='0';resize();
