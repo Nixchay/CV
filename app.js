@@ -95,7 +95,7 @@ try {
   projects=records.map((p,i)=>{const index=indices[p.category]++;const match=p.url.match(/\/file\/d\/([^/]+)/);const sourceTitle=p.sourceTitle?.replace(/\.mp4$/i,'').replace(/\s*\(1080p\).*$/i,'').trim();const fallback=p.category==='skill'?'ING Skill — '+String(index+1).padStart(2,'0'):p.category==='rive'?interactiveNames[index]:match?'3D study — '+String(index+1).padStart(2,'0'):'BIC interactive experience';return {...p,id:'project-'+i,driveId:match?.[1],video:!!match,title:sourceTitle||fallback};});
   // Lead with a 3D study, then move into the existing video and interactive collections.
   const featured=[projects[5],projects[0],projects[10],projects[6],projects[1]];projects=[...featured,...projects.filter(p=>!featured.includes(p))];renderProjects();
-  $('#studio-hotspot').addEventListener('click',()=>openProject('project-0'));
+  $('#studio-hotspot').addEventListener('click', () => { window.open('https://drive.google.com/file/d/12ox3CcxohUIL9lxPKeQ1pffmforaWhV9/view?t=0.945', '_blank', 'noopener,noreferrer');});
 }catch(error){$('#project-grid').innerHTML='<p>Explore the full collection on <a class="text-link" href="https://nischaya.framer.website/portfolio" target="_blank" rel="noopener">my existing portfolio ↗</a>.</p>';$('#show-more').hidden=true;console.warn(error.message);}
 
 try{const {initStudio}=await import('./studio.js');await initStudio({projects,initialProgress:tourProgress,paused,reduced:reduceMotion()});}catch(error){document.body.classList.add('no-webgl');console.warn('Studio fallback active:',error.message);}
